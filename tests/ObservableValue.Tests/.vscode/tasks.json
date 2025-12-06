@@ -1,0 +1,17 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+        {
+			"label": "Build",
+			"group": "build",
+			"command": "dotnet",
+			"type": "process",
+			"args": [
+				"build",
+				"${workspaceFolder}/ObservableValue.Tests.csproj",
+				"/property:GenerateFullPaths=true"
+			],
+			"problemMatcher": "$msCompile"
+        }
+	]
+}

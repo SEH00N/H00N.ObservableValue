@@ -1,5 +1,4 @@
-﻿
-namespace ObservableValue.Tests
+﻿namespace ObservableValue.Tests
 {
     using H00N.ObservableValue;
 
@@ -11,7 +10,7 @@ namespace ObservableValue.Tests
         [ObservableValue]
         private float _MYField2 = 0;
 
-        [ObservableValue(propertyAttributes: ["global::System.Text.Json.Serialization.JsonIgnore"])]
+        [ObservableValue(propertyAttributes: ["global::System.Text.Json.Serialization.JsonIgnore", "global::H00N.ObservableValue.ObservableValue"])]
         private Dictionary<string, int> _myField3 = new Dictionary<string, int>();
     }
 }
