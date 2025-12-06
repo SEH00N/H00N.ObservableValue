@@ -123,7 +123,6 @@ namespace H00N.ObservableValue.Generator
                         }
 
                         sb.AppendLine(ObservableValueGeneratorFormat.GetObservableValueBlock(typeName, eventName, propertyName, fieldName));
-                        sb.AppendLine();
                     }
                 }
 
@@ -131,7 +130,7 @@ namespace H00N.ObservableValue.Generator
                 {
                     INamedTypeSymbol containingType = document.Key;
                     string namespaceName = containingType.ContainingNamespace.ToDisplayString();
-                    string hintName = $"{containingType.Name}_ObservableValue.g.cs";
+                    string hintName = $"{containingType.Name}.ObservableValue.g.cs";
 
                     spc.AddSource(hintName, ObservableValueGeneratorFormat.GetDocument(namespaceName, containingType.Name, document.Value.ToString()));
                 }

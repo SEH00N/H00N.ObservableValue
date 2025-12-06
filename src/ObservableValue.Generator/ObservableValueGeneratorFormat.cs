@@ -25,8 +25,7 @@ namespace H00N.ObservableValue.Generator
         public static string GetObservableValueBlock(string typeName, string eventName, string propertyName, string fieldName)
         {
             return
-@$"
-    public event global::System.Action<{typeName}, {typeName}> {eventName};
+@$"    public event global::System.Action<{typeName}, {typeName}> {eventName};
     public {typeName} {propertyName} 
     {{ 
         get => {fieldName};
@@ -40,13 +39,12 @@ namespace H00N.ObservableValue.Generator
 
             {eventName}?.Invoke(oldValue, value);
         }}
-    }}
-";
+    }}";
         }
 
         public static string GetDocument(string namespaceName, string className, string content)
         {
-            if (string.IsNullOrWhiteSpace(namespaceName))
+            if (string.IsNullOrEmpty(namespaceName))
             {
                 return
 @$"
