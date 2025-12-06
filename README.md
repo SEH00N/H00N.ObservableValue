@@ -15,7 +15,7 @@ public partial class MyClass
 }
 
 // somewhere
-MyClass myClass = null;
+MyClass myClass = new MyClass();
 myClass.OnMyFieldChangedEvent += HandleMyFieldChanged;
 myClass.MyField = 10;
 myClass.MyField = 11;
