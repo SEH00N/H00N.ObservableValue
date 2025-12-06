@@ -58,6 +58,15 @@ namespace H00N.ObservableValue.Generator
             isEnabledByDefault: true
         );
 
+        private static readonly DiagnosticDescriptor MustHaveValidAttributeTextRule = new DiagnosticDescriptor(
+            id: "OBS006",
+            title: "ObservableValue attribute text must be valid",
+            messageFormat: "ObservableValue attribute text '{0}' must be valid",
+            category: "ObservableValue",
+            DiagnosticSeverity.Error,
+            isEnabledByDefault: true
+        );
+
         public static bool EnsureIsPartialClassRule(SourceProductionContext context, INamedTypeSymbol containingType)
         {
             bool isPartial = containingType.DeclaringSyntaxReferences
@@ -153,6 +162,56 @@ namespace H00N.ObservableValue.Generator
             IEnumerable<string> attributeInfos = constant.Values.Select(v => v.Value as string).Where(s => !string.IsNullOrWhiteSpace(s));
             string attributes = string.Join("\n    ", attributeInfos.Select(a => $"[{a}]")) + "\n    ";
             return attributes;
+        }
+
+        public static bool EnsureAttributeTextValidForField(SourceProductionContext context, Location location, string attributesText)
+        {
+            if (string.IsNullOrWhiteSpace(attributesText))
+                return true;
+
+            string member = "int __field__;";
+
+            foreach (string attribute in attributesText.Split('\n'))
+            {
+                string snippet = $"{attribute}\n{member}";
+                SyntaxTree tree = CSharpSyntaxTree.ParseText(snippet, CSharpParseOptions.Default);
+
+                foreach (Diagnostic diagnostic in tree.GetDiagnostics())
+                {
+                    if (diagnostic.Severity != DiagnosticSeverity.Error)
+                        continue;
+
+                    context.ReportDiagnostic(Diagnostic.Create(MustHaveValidAttributeTextRule, location, attribute));
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public static bool EnsureAttributeTextValidForProperty(SourceProductionContext context, Location location, string attributesText)
+        {
+            if (string.IsNullOrWhiteSpace(attributesText))
+                return true;
+
+            string member = "int __Property__ { get; set; }";
+
+            foreach (string attribute in attributesText.Split('\n'))
+            {
+                string snippet = $"{attribute}\n{member}";
+                SyntaxTree tree = CSharpSyntaxTree.ParseText(snippet, CSharpParseOptions.Default);
+
+                foreach (Diagnostic diagnostic in tree.GetDiagnostics())
+                {
+                    if (diagnostic.Severity != DiagnosticSeverity.Error)
+                        continue;
+
+                    context.ReportDiagnostic(Diagnostic.Create(MustHaveValidAttributeTextRule, location, attribute));
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }

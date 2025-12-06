@@ -12,4 +12,5 @@ OBS002  | ObservableValue  | Error    | ObservableValue fields must start with '
 OBS003  | ObservableValue  | Error    | ObservableValue cannot overwrite existing members
 OBS004  | ObservableValue  | Error    | ObservableValue can only be used on partial classes
 OBS005  | ObservableValue  | Error    | ObservableValue field declarations must declare exactly one variable
+OBS006  | ObservableValue  | Error    | ObservableValue attribute text must be valid
 

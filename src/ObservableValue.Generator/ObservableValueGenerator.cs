@@ -62,7 +62,12 @@ namespace H00N.ObservableValue.Generator
                         continue;
 
                     string eventAttributes = GeneratorHelper.GetAttributeString(attributeData, 2);
+                    if (GeneratorHelper.EnsureAttributeTextValidForField(spc, fieldSymbol.Locations[0], eventAttributes) == false)
+                        continue;
+
                     string propertyAttributes = GeneratorHelper.GetAttributeString(attributeData, 3);
+                    if (GeneratorHelper.EnsureAttributeTextValidForProperty(spc, fieldSymbol.Locations[0], propertyAttributes) == false)
+                        continue;
 
                     if (documents.TryGetValue(containingType, out StringBuilder sb) == false)
                     {
