@@ -6,7 +6,7 @@ namespace H00N.ObservableValue.Generator
     {
         public static string GetDefaultEventName(string propertyName)
         {
-            return $"On{propertyName}Changed";
+            return $"On{propertyName}ChangedEvent";
         }
 
         public static string GetDefaultPropertyName(string fieldName)
