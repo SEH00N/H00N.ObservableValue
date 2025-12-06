@@ -7,4 +7,6 @@
 
 Rule ID | Category         | Severity | Notes
 --------|------------------|----------|-----------------------------
-OBS001  | ObservableValue  | Error    | ObservableValue는 private 필드에만 사용할 수 있습니다.
+OBS001  | ObservableValue  | Error    | ObservableValue can only be used on private fields
+OBS002  | ObservableValue  | Error    | ObservableValue fields must start with '_' or a lower-case letter
+OBS003  | ObservableValue  | Error    | ObservableValue cannot overwrite existing members

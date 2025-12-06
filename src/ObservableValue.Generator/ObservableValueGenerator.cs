@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
+using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -22,6 +23,24 @@ namespace ObservableValue.Generator
             isEnabledByDefault: true
         );
 
+        private static readonly DiagnosticDescriptor MustFollowFieldNaming = new DiagnosticDescriptor(
+            id: "OBS002",
+            title: "ObservableValue fields must start with '_' or a lower-case letter",
+            messageFormat: "Field '{0}' must start with '_' or a lower-case letter",
+            category: "ObservableValue",
+            DiagnosticSeverity.Error,
+            isEnabledByDefault: true
+        );
+
+        private static readonly DiagnosticDescriptor CannotGenerateExistingMember = new DiagnosticDescriptor(
+            id: "OBS003",
+            title: "ObservableValue cannot overwrite existing members",
+            messageFormat: "Field '{0}' cannot generate members ('{1}', '{2}') because they already exist",
+            category: "ObservableValue",
+            DiagnosticSeverity.Error,
+            isEnabledByDefault: true
+        );
+
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
             // 1) Attribute가 붙어 있을 "가능성"이 있는 FieldDeclaration만 먼저 필터링
@@ -36,6 +55,8 @@ namespace ObservableValue.Generator
             context.RegisterSourceOutput(compilationAndFields, static (spc, source) =>
             {
                 (Compilation compilation, ImmutableArray<IEnumerable<ObservableFieldInfo>> fieldInfosList) = source;
+
+                var documents = new Dictionary<INamedTypeSymbol, StringBuilder>(SymbolEqualityComparer.Default);
 
                 foreach (IEnumerable<ObservableFieldInfo> fieldInfos in fieldInfosList)
                 {
@@ -56,10 +77,64 @@ namespace ObservableValue.Generator
                             continue;
                         }
 
+                        string fieldName = fieldSymbol.Name;
+                        bool startsWithUnderscore = fieldName.StartsWith("_");
+                        bool startsWithLower = fieldName.Length > 0 && char.IsLower(fieldName[0]);
+                        bool followsNaming = startsWithUnderscore || startsWithLower;
+
+                        if (!followsNaming)
+                        {
+                            spc.ReportDiagnostic(Diagnostic.Create(
+                                MustFollowFieldNaming,
+                                fieldSymbol.Locations[index],
+                                fieldSymbol.Name));
+
+                            continue;
+                        }
+
+                        AttributeData attributeData = fieldInfo.AttributeData;
+                        string typeName = fieldSymbol.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+
+                        string eventName = attributeData.ConstructorArguments.Length > 0 ? attributeData.ConstructorArguments[0].Value as string : null;
+                        string propertyName = attributeData.ConstructorArguments.Length > 1 ? attributeData.ConstructorArguments[1].Value as string : null;
+
+                        propertyName ??= ObservableValueGeneratorFormat.GetDefaultPropertyName(fieldName);
+                        eventName ??= ObservableValueGeneratorFormat.GetDefaultEventName(propertyName);
+
+                        // 기존 멤버와 충돌 여부 확인
+                        bool propertyExists = fieldInfo.ContainingType.GetMembers(propertyName).Length > 0;
+                        bool eventExists = fieldInfo.ContainingType.GetMembers(eventName).Length > 0;
+                        if (propertyExists || eventExists)
+                        {
+                            spc.ReportDiagnostic(Diagnostic.Create(
+                                CannotGenerateExistingMember,
+                                fieldSymbol.Locations[index],
+                                fieldSymbol.Name,
+                                propertyName,
+                                eventName));
+
+                            continue;
+                        }
+
+                        if (documents.TryGetValue(fieldInfo.ContainingType, out StringBuilder sb) == false)
+                        {
+                            sb = new StringBuilder();
+                            documents[fieldInfo.ContainingType] = sb;
+                        }
+
+                        sb.AppendLine(ObservableValueGeneratorFormat.GetObservableValueBlock(typeName, eventName, propertyName, fieldName));
+                        sb.AppendLine();
                     }
                 }
 
-                spc.AddSource("", ObservableValueGeneratorFormat.GetDocument("", "", ""));
+                foreach (KeyValuePair<INamedTypeSymbol, StringBuilder> document in documents)
+                {
+                    INamedTypeSymbol containingType = document.Key;
+                    string namespaceName = containingType.ContainingNamespace.ToDisplayString();
+                    string hintName = $"{containingType.Name}_ObservableValue.g.cs";
+
+                    spc.AddSource(hintName, ObservableValueGeneratorFormat.GetDocument(namespaceName, containingType.Name, document.Value.ToString()));
+                }
             });
         }
 
