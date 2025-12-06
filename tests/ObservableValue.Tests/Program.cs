@@ -1,20 +1,20 @@
 ﻿
-// namespace ObservableValue.Tests
-// {
+namespace ObservableValue.Tests
+{
     using H00N.ObservableValue;
 
     public partial class MyClass
     {
-        [ObservableValue]
+        [ObservableValue("SHoot", "Bobo", [ "global::System." ])]
         private float _myField = 0;
 
         [ObservableValue]
         private float _MYField2 = 0;
 
-        [ObservableValue]
+        [ObservableValue(propertyAttributes: ["JsonIgnore"])]
         private Dictionary<string, int> _myField3 = new Dictionary<string, int>();
     }
-// }
+}
 
 public partial class Program
 {

@@ -22,10 +22,13 @@ namespace H00N.ObservableValue.Generator
             return trimmed.Length == 1 ? first.ToString() : first + trimmed.Substring(1);
         }
 
-        public static string GetObservableValueBlock(string typeName, string eventName, string propertyName, string fieldName)
+        public static string GetObservableValueBlock(string typeName, string eventName, string propertyName, string fieldName, string eventAttributes, string propertyAttributes)
         {
             return
-@$"    public event global::System.Action<{typeName}, {typeName}> {eventName};
+@$"    {eventAttributes}
+    public event global::System.Action<{typeName}, {typeName}> {eventName};
+
+    {propertyAttributes}
     public {typeName} {propertyName} 
     {{ 
         get => {fieldName};
@@ -44,28 +47,24 @@ namespace H00N.ObservableValue.Generator
 
         public static string GetDocument(string namespaceName, string className, string content)
         {
-            if (string.IsNullOrEmpty(namespaceName))
+            if (string.IsNullOrWhiteSpace(namespaceName))
             {
                 return
-@$"
-partial class {className}
+@$"partial class {className}
 {{
 {content}
-}}
-";
+}}";
             }
 
             string indentedContent = Indent(content, "    ");
             return
-@$"
-namespace {namespaceName}
+@$"namespace {namespaceName}
 {{
     partial class {className}
     {{
 {indentedContent}
     }}
-}}
-";
+}}";
         }
 
         private static string Indent(string text, string indent)

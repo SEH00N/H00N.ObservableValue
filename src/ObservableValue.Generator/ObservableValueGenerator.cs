@@ -41,6 +41,15 @@ namespace H00N.ObservableValue.Generator
             isEnabledByDefault: true
         );
 
+        private static readonly DiagnosticDescriptor MustBePartialClass = new DiagnosticDescriptor(
+            id: "OBS004",
+            title: "ObservableValue can only be used on partial classes",
+            messageFormat: "Class '{0}' must be partial",
+            category: "ObservableValue",
+            DiagnosticSeverity.Error,
+            isEnabledByDefault: true
+        );
+
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
             // 1) Attribute가 붙어 있을 "가능성"이 있는 FieldDeclaration만 먼저 필터링
@@ -94,6 +103,22 @@ namespace H00N.ObservableValue.Generator
 
                         AttributeData attributeData = fieldInfo.AttributeData;
                         string typeName = fieldSymbol.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+                        INamedTypeSymbol containingType = fieldSymbol.ContainingType;
+
+                        bool isPartial = containingType
+                            .DeclaringSyntaxReferences
+                            .Select(r => r.GetSyntax() as TypeDeclarationSyntax)
+                            .Any(t => t != null && t.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword)));
+
+                        if (!isPartial)
+                        {
+                            spc.ReportDiagnostic(Diagnostic.Create(
+                                MustBePartialClass,
+                                fieldSymbol.Locations[index],
+                                containingType.Name));
+
+                            continue;
+                        }
 
                         string eventName = attributeData.ConstructorArguments.Length > 0 ? attributeData.ConstructorArguments[0].Value as string : null;
                         string propertyName = attributeData.ConstructorArguments.Length > 1 ? attributeData.ConstructorArguments[1].Value as string : null;
@@ -102,8 +127,8 @@ namespace H00N.ObservableValue.Generator
                         eventName ??= ObservableValueGeneratorFormat.GetDefaultEventName(propertyName);
 
                         // 기존 멤버와 충돌 여부 확인
-                        bool propertyExists = fieldInfo.ContainingType.GetMembers(propertyName).Length > 0;
-                        bool eventExists = fieldInfo.ContainingType.GetMembers(eventName).Length > 0;
+                        bool propertyExists = containingType.GetMembers(propertyName).Length > 0;
+                        bool eventExists = containingType.GetMembers(eventName).Length > 0;
                         if (propertyExists || eventExists)
                         {
                             spc.ReportDiagnostic(Diagnostic.Create(
@@ -116,20 +141,24 @@ namespace H00N.ObservableValue.Generator
                             continue;
                         }
 
-                        if (documents.TryGetValue(fieldInfo.ContainingType, out StringBuilder sb) == false)
+                        if (documents.TryGetValue(containingType, out StringBuilder sb) == false)
                         {
                             sb = new StringBuilder();
-                            documents[fieldInfo.ContainingType] = sb;
+                            documents[containingType] = sb;
                         }
 
-                        sb.AppendLine(ObservableValueGeneratorFormat.GetObservableValueBlock(typeName, eventName, propertyName, fieldName));
+                        string eventAttributes = "";
+                        string propertyAttributes = "";
+                        sb.AppendLine(ObservableValueGeneratorFormat.GetObservableValueBlock(typeName, eventName, propertyName, fieldName, eventAttributes, propertyAttributes));
+                        sb.AppendLine();
                     }
                 }
 
                 foreach (KeyValuePair<INamedTypeSymbol, StringBuilder> document in documents)
                 {
                     INamedTypeSymbol containingType = document.Key;
-                    string namespaceName = containingType.ContainingNamespace.ToDisplayString();
+                    INamespaceSymbol namespaceSymbol = containingType.ContainingNamespace;
+                    string namespaceName = namespaceSymbol is { IsGlobalNamespace: true } ? null : namespaceSymbol.ToDisplayString();
                     string hintName = $"{containingType.Name}.ObservableValue.g.cs";
 
                     spc.AddSource(hintName, ObservableValueGeneratorFormat.GetDocument(namespaceName, containingType.Name, document.Value.ToString()));

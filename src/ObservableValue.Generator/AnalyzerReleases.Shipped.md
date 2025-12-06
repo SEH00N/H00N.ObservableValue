@@ -10,3 +10,5 @@ Rule ID | Category         | Severity | Notes
 OBS001  | ObservableValue  | Error    | ObservableValue can only be used on private fields
 OBS002  | ObservableValue  | Error    | ObservableValue fields must start with '_' or a lower-case letter
 OBS003  | ObservableValue  | Error    | ObservableValue cannot overwrite existing members
+OBS004  | ObservableValue  | Error    | ObservableValue can only be used on partial classes
+
