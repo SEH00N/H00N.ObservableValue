@@ -5,13 +5,13 @@ namespace ObservableValue.Tests
 
     public partial class MyClass
     {
-        [ObservableValue("SHoot", "Bobo", [ "global::System." ])]
-        private float _myField = 0;
+        [ObservableValue("SHoot", "Bobo")]
+        private float _myField = 0, _mymyField;
 
         [ObservableValue]
         private float _MYField2 = 0;
 
-        [ObservableValue(propertyAttributes: ["JsonIgnore"])]
+        [ObservableValue(propertyAttributes: ["global::System.Text.Json.Serialization.JsonIgnore"])]
         private Dictionary<string, int> _myField3 = new Dictionary<string, int>();
     }
 }

@@ -25,11 +25,9 @@ namespace H00N.ObservableValue.Generator
         public static string GetObservableValueBlock(string typeName, string eventName, string propertyName, string fieldName, string eventAttributes, string propertyAttributes)
         {
             return
-@$"    {eventAttributes}
-    public event global::System.Action<{typeName}, {typeName}> {eventName};
+@$"    {eventAttributes}public event global::System.Action<{typeName}, {typeName}> {eventName};
 
-    {propertyAttributes}
-    public {typeName} {propertyName} 
+    {propertyAttributes}public {typeName} {propertyName} 
     {{ 
         get => {fieldName};
         set
@@ -52,8 +50,7 @@ namespace H00N.ObservableValue.Generator
                 return
 @$"partial class {className}
 {{
-{content}
-}}";
+{content}}}";
             }
 
             string indentedContent = Indent(content, "    ");
@@ -62,8 +59,7 @@ namespace H00N.ObservableValue.Generator
 {{
     partial class {className}
     {{
-{indentedContent}
-    }}
+{indentedContent}    }}
 }}";
         }
 
