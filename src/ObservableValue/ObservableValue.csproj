@@ -2,6 +2,26 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+
+    <!-- NuGet 패키지 메타데이터 -->
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageId>H00N.ObservableValue</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>SEH00N</Authors>
+    <Company></Company>
+    <Product>H00N.ObservableValue</Product>
+    <Description>Attribute-based observable field to property generator for C#.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/SEH00N/H00N.ObservableValue</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/SEH00N/H00N.ObservableValue</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>csharp;source-generator;observable;unity</PackageTags>
+    <IncludeSymbols>false</IncludeSymbols>
+    <IncludeSource>false</IncludeSource>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ObservableValue.Generator\ObservableValue.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
 
 </Project>

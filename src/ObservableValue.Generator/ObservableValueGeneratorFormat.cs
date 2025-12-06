@@ -1,3 +1,5 @@
+using System.Linq;
+
 namespace H00N.ObservableValue.Generator
 {
     public static class ObservableValueGeneratorFormat
@@ -73,7 +75,7 @@ namespace {namespaceName}
             if (string.IsNullOrEmpty(text))
                 return text;
 
-            return string.Join('\n', text.Split('\n').Select(line => line.Length == 0 ? line : indent + line));
+            return string.Join("\n", text.Split('\n').Select(line => line.Length == 0 ? line : indent + line));
         }
     }
 }
