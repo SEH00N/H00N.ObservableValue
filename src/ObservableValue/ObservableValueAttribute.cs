@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ObservableValue
+namespace H00N.ObservableValue
 {
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public class ObservableValueAttribute : Attribute

@@ -7,12 +7,12 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace ObservableValue.Generator
+namespace H00N.ObservableValue.Generator
 {
     [Generator]
     public sealed class ObservableValueGenerator : IIncrementalGenerator
     {
-        private const string AttributeFullName = "ObservableValue.ObservableValueAttribute";
+        private const string AttributeFullName = "H00N.ObservableValue.ObservableValueAttribute";
 
         private static readonly DiagnosticDescriptor MustBePrivateField = new DiagnosticDescriptor(
             id: "OBS001",
@@ -165,7 +165,7 @@ namespace ObservableValue.Generator
 
                         string fullName = attrClass.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
 
-                        // global::ObservableValue.ObservableValueAttribute
+                        // global::H00N.ObservableValue.ObservableValueAttribute
                         if (fullName == "global::" + AttributeFullName)
                         {
                             INamedTypeSymbol containingType = fieldSymbol.ContainingType;

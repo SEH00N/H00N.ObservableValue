@@ -1,4 +1,4 @@
-namespace ObservableValue.Generator
+namespace H00N.ObservableValue.Generator
 {
     public static class ObservableValueGeneratorFormat
     {
