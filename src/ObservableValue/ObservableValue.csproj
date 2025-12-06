@@ -6,7 +6,7 @@
     <!-- NuGet 패키지 메타데이터 -->
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageId>H00N.ObservableValue</PackageId>
-    <Version>0.1.3</Version>
+    <Version>0.1.4</Version>
     <Authors>SEH00N</Authors>
     <Company></Company>
     <Product>H00N.ObservableValue</Product>

@@ -5,7 +5,7 @@ C# Value Observing
 ```cs
 public partial class MyClass
 {
-    [Observable]
+    [ObservableValue]
     private float _myField = 0;
 }
 
