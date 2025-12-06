@@ -31,3 +31,13 @@ Value Changed! OldValue: 0, NewValue: 10
 Value Changed! OldValue: 10, NewValue: 11
 Value Changed! OldValue: 11, NewValue: 9
 ```
+
+## ⚠️ Notes on equality and change detection
+
+ObservableValue only raises change notifications when it detects an actual value change.
+
+Internally it uses:
+
+```cs
+System.Collections.Generic.EqualityComparer<T>.Default.Equals(oldValue, newValue)
+```

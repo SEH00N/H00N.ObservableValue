@@ -1,5 +1,8 @@
-﻿namespace ObservableValue.Tests
+﻿using System;
+
+namespace ObservableValue.Tests
 {
+    using System.Collections.Generic;
     using H00N.ObservableValue;
 
     public partial class MyClass
@@ -20,10 +23,10 @@ public partial class Program
     public static void Main()
     {
         ObservableValue.Tests.MyClass myClass = new ObservableValue.Tests.MyClass();
-        // myClass.OnMyFieldChangedEvent += HandleMyFieldChanged;
-        // myClass.MyField = 10;
-        // myClass.MyField = 11;
-        // myClass.MyField = 9;
+        myClass.OnMyFieldChangedEvent += HandleMyFieldChanged;
+        myClass.MyField = 10;
+        myClass.MyField = 11;
+        myClass.MyField = 9;
     }
 
     private static void HandleMyFieldChanged(float oldValue, float newValue)
