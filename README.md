@@ -1,6 +1,11 @@
 # ObservableValue
 C# Value Observing
 
+## Install
+```
+dotnet add package H00N.ObservableValue
+```
+
 ## Usage
 ```cs
 public partial class MyClass
